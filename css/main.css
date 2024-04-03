@@ -1,0 +1,49 @@
+main {
+padding: 30px 20px 30px 20px;
+}
+
+.item-list {
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    border-bottom: 1px solid #ededef;
+    padding : 20px 0 20px 0;
+}
+.item-list_img {
+    width :150px;
+    height : 150px;
+    border: 1px solid rgba(0,0,0,0.1);
+    border-radius: 12px;
+    margin-right: 20px;
+    display:flex;
+    justify-content: center;
+    align-items: center; /* img의 사진을 중간에 위치 원함 -> 상위 컴포넌트에 해줬음*/
+}
+.item-list_img img {
+    width : 50px;
+}
+.item-list_info {
+    height: 130px;
+    display: flex;
+    flex-direction: column; /*세로로 배열*/
+    justify-content: start;
+    align-items: start;
+}
+.item-list_info div {
+    margin-top: 10px;
+}
+.item-list_info-meta {
+    font-size: smaller;
+    color:rgba(0,0,0,0.5);
+}
+
+.write-btn {
+    position:fixed;
+    bottom:120px;
+    right: 30px;
+    padding : 10px 15px 10px 15px;
+    font-size: 20px;
+    background-color: #fe6f0f;
+    color:white;
+    border-radius: 25px;
+}
