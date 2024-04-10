@@ -48,7 +48,7 @@ async def get_image(item_id):
                               SELECT image FROM items WHERE id = {item_id}
                               """).fetchone()[0] #하나의 컬럼만가져오는 문법
     
-    return Response(content = bytes.fromhex(image_bytes))
+    return Response(content = bytes.fromhex(image_bytes), media_type='image/*')
     #image_bytes를 가져와 해석한뒤 bytes 컨텐츠로 response하겠다.
     
 app.mount("/", StaticFiles(directory='frontend', html=True), name='static')
