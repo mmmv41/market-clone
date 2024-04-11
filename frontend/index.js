@@ -14,7 +14,9 @@ const calcTime = (timestamp) => {
 
 const renderData = (data) => {
   const main = document.querySelector("main");
-  //reverse() 데이터 순서를 뒤집어줌 (나중에 온게 젤 위로)
+
+  //reverse() 데이터 순서를 뒤집어줌 (나중에 온게 제일 위로)
+  // array에만 쓸 수 있는 구문 (foreach)
   data.reverse().forEach(async (obj) => {
     const div = document.createElement("div");
     div.className = "item-list";
@@ -59,12 +61,11 @@ const renderData = (data) => {
 
     main.appendChild(div);
   });
-  // array에만 쓸 수 있는 구문 (foreach)
 };
 
 const fetchList = async () => {
   const res = await fetch("/items");
-  const data = await res.json();
+  const data = await res.json(); //data는 json으로 바꿔줘야함
   renderData(data);
 };
 
