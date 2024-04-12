@@ -1,0 +1,76 @@
+header {
+    border-bottom: 1px solid #ededef;
+    margin-top: 10px;
+    padding-bottom: 5px;
+
+}
+
+.info-bar {
+    display :flex;
+    justify-content: space-between; /* 양쪽끝에 배치 */
+    padding : 0px 10px 0px 10px;
+    align-items: center;
+
+}
+.info-bar_time {
+    font-size:12px;
+    font-weight: bold;
+}
+
+.info-bar_icons img {
+    width : 15px;
+}
+
+.menu-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+}
+.menu-bar_location{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    margin-left: 10px;
+}
+.menu-bar_location img {
+    width : 15px;
+}
+.menu-bar_location icon {
+    padding-top: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.menu-bar_icons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    margin-right: 20px;
+}
+/*.menu-bar_alert {
+    position: absolute;
+    top: 0px; 상단에서의 위치 조정 
+    right: 12px;  우측에서의 위치 조정 
+    width: 10px;  동그라미의 너비 
+    height: 10px;  동그라미의 높이 
+    background-color: red;  배경 색상 
+    border-radius: 50%;  동그라미 모양 만들기 
+    border: 1px solid white;
+}*/
+
+/*.menu-bar_alert span {
+    position: absolute; 
+    top: 50%; 
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 1px;
+    color:white;
+}*/
+
+.menu-bar_icons img {
+    width : 25px;
+    margin-right: 10px;
+}
