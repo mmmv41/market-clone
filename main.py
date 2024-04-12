@@ -1,8 +1,10 @@
-from fastapi import FastAPI,UploadFile,Form,Response
+from fastapi import FastAPI,UploadFile,Form,Response,Depends
 from fastapi.responses import JSONResponse
 from fastapi.encoders import jsonable_encoder
 from fastapi.staticfiles import StaticFiles
+from fastapi_login import LoginManager
 from typing import Annotated
+from fastapi_login.exceptions import InvalidCredentialsException
 import sqlite3
 
 con = sqlite3.connect('db.db',check_same_thread=False)  #db.db와 연결
@@ -10,6 +12,64 @@ con = sqlite3.connect('db.db',check_same_thread=False)  #db.db와 연결
 cur = con.cursor()
 
 app = FastAPI()
+
+SERCRET = "min" # access token을 어떻게 인코딩할지 정함
+manager = LoginManager(SERCRET,"/login")
+ 
+ 
+#유저가 DB에 존재하는지 조회
+@manager.user_loader()
+def query_user(data):
+    # SQL 쿼리의 WHERE 절을 동적으로 생성하기 위한 변수.
+    WHERE_STATEMENTS = f'id="{data}"'
+    if type(data) == dict:
+        WHERE_STATEMENTS = f'''id="{data['id']}"'''
+    con.row_factory = sqlite3.Row #컬럼명도 같이 가져옴
+    cur = con.cursor()
+    user = cur.execute(f"""
+                        SELECT * FROM users WHERE { WHERE_STATEMENTS }
+                        """).fetchone()
+    return user
+ 
+ 
+@app.post('/login')
+def login(id:Annotated[str,Form()],
+           password : Annotated[str,Form()]):
+    user = query_user(id) #유저를 받아와서
+    
+    #유저의 존재유무 확인
+    if not user: 
+        raise InvalidCredentialsException 
+    elif password != user['password']:#401 을 자동으로 생성해서 내려줌
+        raise InvalidCredentialsException
+    #입력한 password와 유저 정보를 조회해서 얻은 password가 다르면
+    
+    
+    access_token = manager.create_access_token(data= { #어떤 데이터 넣을지
+        'sub': {
+            'id':user['id'],
+            'name' : user['name'],
+            'email':user['email']
+        }                                              
+           
+    }) #액세스 토큰 생성
+    return {'access_token': access_token}
+
+
+#사용자 추가 과정
+@app.post('/signup') #프론트에서 폼을 통해 post로 보냄
+#http의 메소드와 경로지정 
+def signup(id:Annotated[str,Form()],
+           password : Annotated[str,Form()],
+           name:Annotated[str,Form()],
+           email:Annotated[str,Form()]):
+    
+    cur.execute(f"""
+                INSERT INTO users(id,name,email,password)
+                VALUES ('{id}','{name}','{email}','{password}')
+                """)
+    con.commit()
+    return 200
 
 #글쓰기 페이지에서 post / 조회 페이지에서 get
 
@@ -36,10 +96,11 @@ async def create_item(image:UploadFile,
     # 4)items 라는 테이블에 값을 넣어줌
     
     con.commit() #데이터가 들어감
-    return '200'
+    return 200
 
 @app.get('/items')  #items라는 get요청 들어왔을 때
-async def get_items():
+async def get_items(user=Depends(manager)): 
+    #유저가 인증된 상태에서만 응답 보낼 수 있게
     con.row_factory = sqlite3.Row #컬럼명도 같이 가져옴
 
     cur = con.cursor()
@@ -69,24 +130,6 @@ async def get_image(item_id):
     #image_bytes를 가져와 해석한뒤 bytes 컨텐츠로 response하겠다.
     
     
-@app.post('/signup') #프론트에서 폼을 통해 post로 보냄
-#http의 메소드와 경로지정 
-
-
-#사용자 추가 과정
-def signup(id:Annotated[str,Form()],
-           password : Annotated[str,Form()],
-           name:Annotated[str,Form()],
-           email:Annotated[str,Form()]):
-    
-    cur.execute(f"""
-                INSERT INTO users(id,name,email,password)
-                VALUES ('{id}','{name}','{email}','{password}')
-                """)
-    con.commit()
-    return 200
-
-
     
 app.mount("/", StaticFiles(directory='frontend', html=True), name='static')
 #path 라서 맨밑에 작성하는게 좋음
